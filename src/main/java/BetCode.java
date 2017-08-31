@@ -1,3 +1,5 @@
+import sun.java2d.pipe.AATextRenderer;
+
 import java.util.ArrayList;
 
 public class BetCode {
@@ -123,17 +125,19 @@ public class BetCode {
                 0, new int[6 - betCode.getDanBalls().size()], 0);
         //合并胆码、拖码以及蓝球
         for(int[] i : tuoBallCombination) {
-            bc = new BetCode();
-            ArrayList<Integer> temp = new ArrayList<Integer>();
-            //胆码拖码合并之后存入红球
-            temp.addAll(Util.ArrayToArrayList(i));
-            temp.addAll(betCode.getDanBalls());
-            bc.setRedBalls(temp);
-            //存入蓝球
-            bc.setBlueBalls(betCode.getBlueBalls());
-            //存入倍数
-            bc.setMultiple(betCode.getMultiple());
-            Util.addWithMultiple(chaiDanBetCode, bc);
+            for(int j = 0; j < betCode.getBlueBalls().size(); j++) {
+                bc = new BetCode();
+                ArrayList<Integer> temp = new ArrayList<Integer>();
+                //胆码拖码合并之后存入红球
+                temp.addAll(Util.ArrayToArrayList(i));
+                temp.addAll(betCode.getDanBalls());
+                bc.setRedBalls(temp);
+                //存入蓝球
+                bc.setBlueBalls(new ArrayList<Integer>(betCode.getBlueBalls().subList(j,j)));
+                //存入倍数
+                bc.setMultiple(betCode.getMultiple());
+                Util.addWithMultiple(chaiDanBetCode, bc);
+            }
         }
     }
 
@@ -155,6 +159,16 @@ public class BetCode {
             System.out.println("The same!");
             System.out.println("chaiDanBetCode1 size: " + chaiDanBetCode1.size());
             System.out.println("chaiDanBetCode2 size: " + chaiDanBetCode2.size());
+            totalMoney(chaiDanBetCode1);
         }
+    }
+
+    public void totalMoney(ArrayList<BetCode> chaiDanBetCode) {
+        int totalMultiple = 0;
+        for (BetCode bc : chaiDanBetCode) {
+            totalMultiple += bc.getMultiple();
+        }
+        System.out.println("Total multiple is " + totalMultiple
+            + " Total money is :" + totalMultiple * 2);
     }
 }
