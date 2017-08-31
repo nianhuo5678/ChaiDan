@@ -128,12 +128,14 @@ public class BetCode {
             for(int j = 0; j < betCode.getBlueBalls().size(); j++) {
                 bc = new BetCode();
                 ArrayList<Integer> temp = new ArrayList<Integer>();
+                ArrayList<Integer> tempB = new ArrayList<Integer>();
                 //胆码拖码合并之后存入红球
                 temp.addAll(Util.ArrayToArrayList(i));
                 temp.addAll(betCode.getDanBalls());
                 bc.setRedBalls(temp);
                 //存入蓝球
-                bc.setBlueBalls(new ArrayList<Integer>(betCode.getBlueBalls().subList(j,j)));
+                tempB.add(betCode.getBlueBalls().get(j));
+                bc.setBlueBalls(tempB);
                 //存入倍数
                 bc.setMultiple(betCode.getMultiple());
                 Util.addWithMultiple(chaiDanBetCode, bc);
