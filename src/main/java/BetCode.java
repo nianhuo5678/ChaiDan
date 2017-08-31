@@ -57,10 +57,26 @@ public class BetCode {
         this.multiple = multiple;
     }
 
-    public void chaidan (String str) {
+    @Override
+    public int hashCode() {
+        return redBalls.hashCode() + blueBalls.hashCode() + multiple;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof BetCode) {
+            BetCode bc = (BetCode) obj;
+            return redBalls.equals(bc.getRedBalls()) &&
+                    blueBalls.equals(bc.getBlueBalls()) &&
+                    multiple == bc.getMultiple();
+        }
+        return false;
+    }
+
+    public ArrayList<BetCode> chaidan (String str) {
         Request request = new Request();
         ArrayList<BetCode> betCodeArrayList = request.transferStr(str);
-        ArrayList<String> chaiDanBetCode = new ArrayList<String>();
+        ArrayList<BetCode> chaiDanBetCode = new ArrayList<BetCode>();
 
         for (int i = 0; i < betCodeArrayList.size(); i++) {
             //调用拆复式或拆胆拖方法
@@ -70,9 +86,10 @@ public class BetCode {
                 chaiDantuo(betCodeArrayList.get(i), chaiDanBetCode);
             }
         }
+        return chaiDanBetCode;
     }
 
-    public void chaiFuShi(BetCode betCode, ArrayList<String> chaiDanBetCode) {
+    public void chaiFuShi(BetCode betCode, ArrayList<BetCode> chaiDanBetCode) {
         ArrayList<int[]> redCodeCombination = new ArrayList<int[]>();
         ArrayList<int[]> blueCodeCombination = new ArrayList<int[]>();
         //拆分红球排列组合
@@ -82,40 +99,62 @@ public class BetCode {
         blueCodeCombination = Util.combinationSelect(blueCodeCombination, betCode.getBlueBalls(),
                 0, new int[1], 0);
 
-        StringBuilder sb = null;
+        BetCode bc = null;
         for(int[] i : redCodeCombination) {
             for (int[] j : blueCodeCombination) {
-                sb = new StringBuilder();
-                //拼接红球
-                for (int k = 0; k < i.length; k++) {
-                    if (i[k] < 10) {
-                        sb.append("0");
-                    }
-                    sb.append(i[k]);
-                    sb.append(",");
-                }
-                //删除最后一个逗号
-                sb.deleteCharAt(sb.length() - 1);
-                //增加竖线
-                sb.append("|");
-                //拼接蓝球
-                for (int l = 0; l < j.length; l++) {
-                    if (j[l] < 10) {
-                        sb.append(j[l]);
-                    }
-                    sb.append(j[l]);
-                    sb.append(",");
-                }
-                //删除最后一个逗号
-                sb.deleteCharAt(sb.length() - 1);
-
-                chaiDanBetCode.add(sb.toString());
-                System.out.println(sb.toString());
+                bc = new BetCode();
+                //存入红球
+                bc.setRedBalls(Util.ArrayToArrayList(i));
+                //存入蓝球
+                bc.setBlueBalls(Util.ArrayToArrayList(j));
+                //存入倍数
+                bc.setMultiple(betCode.getMultiple());
+                Util.addWithMultiple(chaiDanBetCode, bc);
             }
         }
     }
 
-    public void chaiDantuo(BetCode betCode, ArrayList<String> chaiDanBetCode) {
+    public void chaiDantuo(BetCode betCode, ArrayList<BetCode> chaiDanBetCode) {
 
+        ArrayList<int[]> tuoBallCombination = new ArrayList<int[]>();
+        BetCode bc = null;
+        //拆分拖码排列组合
+        tuoBallCombination = Util.combinationSelect(tuoBallCombination, betCode.getTuoBalls(),
+                0, new int[6 - betCode.getDanBalls().size()], 0);
+        //合并胆码、拖码以及蓝球
+        for(int[] i : tuoBallCombination) {
+            bc = new BetCode();
+            ArrayList<Integer> temp = new ArrayList<Integer>();
+            //胆码拖码合并之后存入红球
+            temp.addAll(Util.ArrayToArrayList(i));
+            temp.addAll(betCode.getDanBalls());
+            bc.setRedBalls(temp);
+            //存入蓝球
+            bc.setBlueBalls(betCode.getBlueBalls());
+            //存入倍数
+            bc.setMultiple(betCode.getMultiple());
+            Util.addWithMultiple(chaiDanBetCode, bc);
+        }
+    }
+
+    public void compareChaiDan(ArrayList<BetCode> chaiDanBetCode1, ArrayList<BetCode> chaiDanBetCode2) {
+        if (chaiDanBetCode1.size() != chaiDanBetCode2.size()) {
+            System.out.println("Not the same!");
+            System.out.println("chaiDanBetCode1:" + chaiDanBetCode1.size());
+            System.out.println("chaiDanBetCode2:" + chaiDanBetCode2.size());
+        } else {
+            for (BetCode bc : chaiDanBetCode1) {
+                if ( !chaiDanBetCode2.contains(bc) ) {
+                    System.out.println("Not the same!");
+                    System.out.println(bc.getRedBalls() + "|" + bc.getBlueBalls()
+                            + "#" + bc.multiple
+                            + " in chaiDanBetCode1, but not in chaiDanBetCode2");
+                    return;
+                }
+            }
+            System.out.println("The same!");
+            System.out.println("chaiDanBetCode1 size: " + chaiDanBetCode1.size());
+            System.out.println("chaiDanBetCode2 size: " + chaiDanBetCode2.size());
+        }
     }
 }

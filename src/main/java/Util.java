@@ -40,4 +40,30 @@ public class Util {
         }
         return balls;
     }
+
+    public static ArrayList<Integer> ArrayToArrayList (int[] arr) {
+        ArrayList<Integer> balls = new ArrayList<Integer>();
+        for (int i = 0; i < arr.length; i++) {
+            balls.add(arr[i]);
+        }
+        return balls;
+    }
+
+    /**
+     * 判断betcode对象是否已经在arraylist中，如果已经存在，修改倍数；
+     * 如果不在则插入arraylist
+     * @param chaiDanBetCode 存放betcode的arraylist
+     * @param betCode 将要插入的betcode对象
+     */
+    public static void addWithMultiple (ArrayList<BetCode> chaiDanBetCode, BetCode betCode) {
+        for (BetCode bc : chaiDanBetCode) {
+            //红球蓝球都相等，增加倍数；不相等，插入队列
+            if ( bc.getRedBalls().equals(betCode.getRedBalls()) &&
+                    bc.getBlueBalls().equals(betCode.getBlueBalls())) {
+                bc.setMultiple(bc.getMultiple() + betCode.getMultiple());
+                return;
+            }
+        }
+        chaiDanBetCode.add(betCode);
+    }
 }
