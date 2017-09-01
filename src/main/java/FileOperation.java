@@ -7,7 +7,7 @@ import java.io.File;
 public class FileOperation {
 
     public void writeFile(ArrayList<BetCode> chaiDanBetCode, String fileName) {
-        String path = "E:" + fileName;
+        String path = fileName;
         File f = new File(path);
         if (f.exists()) {
             f.delete();

@@ -128,14 +128,16 @@ public class BetCode {
             for(int j = 0; j < betCode.getBlueBalls().size(); j++) {
                 bc = new BetCode();
                 ArrayList<Integer> temp = new ArrayList<Integer>();
-                ArrayList<Integer> tempB = new ArrayList<Integer>();
                 //胆码拖码合并之后存入红球
                 temp.addAll(Util.ArrayToArrayList(i));
                 temp.addAll(betCode.getDanBalls());
                 bc.setRedBalls(temp);
                 //存入蓝球
-                tempB.add(betCode.getBlueBalls().get(j));
-                bc.setBlueBalls(tempB);
+                if (betCode.getBlueBalls().size() == 1) {
+                    bc.setBlueBalls(betCode.getBlueBalls());
+                } else {
+                    bc.setBlueBalls(new ArrayList<Integer>(betCode.getBlueBalls().subList(j,j+1)));
+                }
                 //存入倍数
                 bc.setMultiple(betCode.getMultiple());
                 Util.addWithMultiple(chaiDanBetCode, bc);
@@ -143,11 +145,12 @@ public class BetCode {
         }
     }
 
-    public void compareChaiDan(ArrayList<BetCode> chaiDanBetCode1, ArrayList<BetCode> chaiDanBetCode2) {
+    public boolean compareChaiDan(ArrayList<BetCode> chaiDanBetCode1, ArrayList<BetCode> chaiDanBetCode2) {
         if (chaiDanBetCode1.size() != chaiDanBetCode2.size()) {
             System.out.println("Not the same!");
             System.out.println("chaiDanBetCode1:" + chaiDanBetCode1.size());
             System.out.println("chaiDanBetCode2:" + chaiDanBetCode2.size());
+            return false;
         } else {
             for (BetCode bc : chaiDanBetCode1) {
                 if ( !chaiDanBetCode2.contains(bc) ) {
@@ -155,13 +158,12 @@ public class BetCode {
                     System.out.println(bc.getRedBalls() + "|" + bc.getBlueBalls()
                             + "#" + bc.multiple
                             + " in chaiDanBetCode1, but not in chaiDanBetCode2");
-                    return;
+                    return false;
                 }
             }
-            System.out.println("The same!");
-            System.out.println("chaiDanBetCode1 size: " + chaiDanBetCode1.size());
-            System.out.println("chaiDanBetCode2 size: " + chaiDanBetCode2.size());
-            totalMoney(chaiDanBetCode1);
+//            totalMoney(chaiDanBetCode1);
+            System.out.println("The Same!");
+            return true;
         }
     }
 

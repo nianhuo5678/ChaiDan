@@ -9,6 +9,7 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
@@ -16,7 +17,8 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
+import java.net.URI;
+import java.net.URISyntaxException;
 
 public class Request {
     CloseableHttpClient httpClient = null;
@@ -28,8 +30,23 @@ public class Request {
                 .build();
     }
 
-    public String getResponse(String url) {
-        HttpGet httpGet = new HttpGet(url);
+    public String getResponse(String betCode) {
+
+        URI uri = null;
+        try {
+            uri = new URIBuilder()
+                    .setScheme("http")
+                    .setHost("10.110.42.39")
+                    .setPath("/info/listSubBetCodeInfo.do")
+                    .setParameter("lotteryId","1")
+                    .setParameter("betCode",betCode)
+                    .setParameter("multiple","1")
+                    .build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+        HttpGet httpGet = new HttpGet(uri);
         CloseableHttpResponse httpResponse = null;
         String responseStr=null;
         try {
