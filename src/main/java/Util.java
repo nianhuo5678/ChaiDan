@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Util {
 
@@ -55,15 +56,23 @@ public class Util {
      * @param chaiDanBetCode 存放betcode的arraylist
      * @param betCode 将要插入的betcode对象
      */
-    public static void addWithMultiple (ArrayList<BetCode> chaiDanBetCode, BetCode betCode) {
-        for (BetCode bc : chaiDanBetCode) {
-            //红球蓝球都相等，增加倍数；不相等，插入队列
-            if ( bc.getRedBalls().equals(betCode.getRedBalls()) &&
-                    bc.getBlueBalls().equals(betCode.getBlueBalls())) {
-                bc.setMultiple(bc.getMultiple() + betCode.getMultiple());
-                return;
-            }
+    public static void addWithMultiple (HashMap<String, Integer> chaiDanBetCode, BetCode betCode) {
+//        for (BetCode bc : chaiDanBetCode) {
+//            //红球蓝球都相等，增加倍数；不相等，插入队列
+//            if ( bc.getRedBalls().equals(betCode.getRedBalls()) &&
+//                    bc.getBlueBalls().equals(betCode.getBlueBalls())) {
+//                bc.setMultiple(bc.getMultiple() + betCode.getMultiple());
+//                return;
+//            }
+//        }
+        //红球蓝球都相等，增加倍数；不相等，插入队列
+        String key = betCode.toString();
+        Integer multiple = chaiDanBetCode.get(key);
+        if ( multiple != null ) {
+            chaiDanBetCode.put(key, (chaiDanBetCode.get(key) + betCode.getMultiple()) );
+        } else {
+            chaiDanBetCode.put(key, betCode.getMultiple());
         }
-        chaiDanBetCode.add(betCode);
+//        chaiDanBetCode.add(betCode);
     }
 }
