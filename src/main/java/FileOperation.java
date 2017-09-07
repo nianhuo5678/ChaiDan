@@ -1,43 +1,57 @@
+import java.io.*;
 import java.util.ArrayList;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.File;
 
 public class FileOperation {
 
-    public void writeFile(ArrayList<BetCode> chaiDanBetCode, String fileName) {
-        String path = fileName;
-        File f = new File(path);
+    public void writeFile(StringBuilder sb, String fileName) {
+        File f = new File(fileName);
         if (f.exists()) {
             f.delete();
         }
         FileWriter fw = null;
         BufferedWriter bw = null;
-        StringBuilder sb = new StringBuilder();
         try {
-            fw = new FileWriter(path,true);
+            fw = new FileWriter(fileName,true);
             bw = new BufferedWriter(fw);
-            for (BetCode betCode : chaiDanBetCode) {
-                sb.append(betCode.getRedBalls());
-                sb.append("|");
-                sb.append(betCode.getBlueBalls());
-                sb.append("#");
-                sb.append(betCode.getMultiple());
-                sb.append("\n");
-            }
             bw.write(sb.toString());
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            //关闭
+            try {
+                bw.close();
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+    }
 
-        //关闭
+    public ArrayList<String> readFile(String fileName) {
+        BufferedReader bufferedReader = null;
+        FileReader fileReader = null;
+        String line;
+        ArrayList<String> lines = new ArrayList<String>();
         try {
-            bw.close();
-            fw.close();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
+            fileReader = new FileReader(fileName);
+            bufferedReader = new BufferedReader(fileReader);
+            while ((line = bufferedReader.readLine()) != null) {
+                lines.add(line);
+            }
+        } catch (FileNotFoundException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bufferedReader.close();
+                fileReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
         }
+        return lines;
     }
 }

@@ -63,18 +63,10 @@ public class BetCode {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         //拼接红球
-        for (int i : redBalls) {
-            if (i < 10) {
-                stringBuilder.append("0");
-            }
-            stringBuilder.append(i);
-        }
-        for (int i : blueBalls) {
-            if (i < 10) {
-                stringBuilder.append("0");
-            }
-            stringBuilder.append(i);
-        }
+        Util.combineBalls(stringBuilder, redBalls);
+
+        //拼接蓝球
+        Util.combineBalls(stringBuilder, blueBalls);
 
         return stringBuilder.toString();
     }
@@ -88,19 +80,24 @@ public class BetCode {
     public boolean equals(Object obj) {
         if (obj instanceof BetCode) {
             BetCode bc = (BetCode) obj;
-            return redBalls.equals(bc.getRedBalls()) &&
+            boolean result = redBalls.equals(bc.getRedBalls()) &&
                     blueBalls.equals(bc.getBlueBalls()) &&
                     multiple == bc.getMultiple();
+            return result;
         }
         return false;
     }
 
-    public HashMap<String, Integer> chaidan (String str) {
-//        long startTime = System.currentTimeMillis();
+    /**
+     * 调用拆胆拖方法或拆复式方法
+     * @param str
+     * @return 6+1拆单结果
+     */
+    public Map<Long, Integer> chaidan (String str) {
+        long startTime = System.currentTimeMillis();
         Request request = new Request();
         ArrayList<BetCode> betCodeArrayList = request.transferStr(str);
-//        ArrayList<BetCode> chaiDanBetCode = new ArrayList<BetCode>();
-        HashMap<String, Integer> chaiDanBetCode = new HashMap<String, Integer>();
+        Map<Long, Integer> chaiDanBetCode = new TreeMap<>();
         for (int i = 0; i < betCodeArrayList.size(); i++) {
             //调用拆复式或拆胆拖方法
             if (betCodeArrayList.get(i).getRedBalls() != null) {
@@ -109,12 +106,18 @@ public class BetCode {
                 chaiDantuo(betCodeArrayList.get(i), chaiDanBetCode);
             }
         }
-//        long endTime = System.currentTimeMillis();
-//        System.out.println("Chaidan Time:" + (endTime - startTime));
+        long endTime = System.currentTimeMillis();
+        System.out.println("Chaidan Time:" + (endTime - startTime));
         return chaiDanBetCode;
     }
 
-    public void chaiFuShi(BetCode betCode, HashMap<String, Integer> chaiDanBetCode) {
+    /**
+     * 复式的拆单方法
+     * @param betCode 将要被拆成6+1的betCode对象
+     * @param chaiDanBetCode 存储拆单后6+1betCode的数据结构
+     */
+    public void chaiFuShi(BetCode betCode, Map<Long, Integer> chaiDanBetCode) {
+
         ArrayList<int[]> redCodeCombination = new ArrayList<int[]>();
         ArrayList<int[]> blueCodeCombination = new ArrayList<int[]>();
         //拆分红球排列组合
@@ -139,7 +142,12 @@ public class BetCode {
         }
     }
 
-    public void chaiDantuo(BetCode betCode, HashMap<String, Integer> chaiDanBetCode) {
+    /**
+     * 胆拖的拆单方法
+     * @param betCode 将要被拆成6+1的betCode对象
+     * @param chaiDanBetCode 存储拆单后6+1betCode的数据结构
+     */
+    public void chaiDantuo(BetCode betCode, Map<Long, Integer> chaiDanBetCode) {
 
         ArrayList<int[]> tuoBallCombination = new ArrayList<int[]>();
         BetCode bc = null;
@@ -169,36 +177,55 @@ public class BetCode {
         }
     }
 
-    public boolean compareChaiDan(HashMap<String, Integer> chaiDanBetCode1, HashMap<String, Integer> chaiDanBetCode2) {
-//        long startTime = System.currentTimeMillis();
+    /**
+     * 比较两种方式的拆单结果
+     * @param chaiDanBetCode1 方法1的拆单结果
+     * @param chaiDanBetCode2 方法2的拆单结果
+     * @return 比较结果
+     */
+    public boolean compareChaiDan(Map<Long, Integer> chaiDanBetCode1, Map<Long, Integer> chaiDanBetCode2) {
+        long startTime = System.currentTimeMillis();
         if (chaiDanBetCode1.size() != chaiDanBetCode2.size()) {
             System.out.println("Not the same!");
             System.out.println("chaiDanBetCode1:" + chaiDanBetCode1.size());
             System.out.println("chaiDanBetCode2:" + chaiDanBetCode2.size());
             return false;
         } else {
-//            for (BetCode bc : chaiDanBetCode1) {
-//                if ( !chaiDanBetCode2.contains(bc) ) {
-//                    System.out.println("Not the same!");
-//                    System.out.println(bc.getRedBalls() + "|" + bc.getBlueBalls()
-//                            + "#" + bc.multiple
-//                            + " in chaiDanBetCode1, but not in chaiDanBetCode2");
-//                    return false;
-//                }
-//            }
-            Iterator<Map.Entry<String, Integer>> iterator = chaiDanBetCode1.entrySet().iterator();
-            while (iterator.hasNext()) {
-                String key = iterator.next().getKey();
-                if ( !chaiDanBetCode2.containsKey(key) ) {
+//            Iterator<Map.Entry<Long, Integer>> iterator = chaiDanBetCode1.entrySet().iterator();
+            Iterator<Map.Entry<Long, Integer>> iterator1 = chaiDanBetCode1.entrySet().iterator();
+            Iterator<Map.Entry<Long, Integer>> iterator2 = chaiDanBetCode2.entrySet().iterator();
+            while (iterator1.hasNext()) {
+                Map.Entry entry1 = iterator1.next();
+                Map.Entry entry2 = iterator2.next();
+                if ( !entry1.equals(entry2) ) {
                     System.out.println("Not the same!");
-                    System.out.println(key + " in chaiDanBetCode1, but not in chaiDanBetCode2");
+                    System.out.println("chaiDanBetCode1:" + entry1.getKey() + " " + entry1.getValue());
+                    System.out.println("chaiDanBetCode2:" + entry2.getKey() + " " + entry2.getValue());
                     return false;
                 }
             }
+//            while (iterator.hasNext()) {
+//                Map.Entry entry = iterator.next();
+//                Object key = entry.getKey();
+//                Object value = entry.getValue();
+//                //先查看key存不存在
+//                if ( !chaiDanBetCode2.containsKey(key) ) {
+//                    System.out.println("Not the same!");
+//                    System.out.println(key + " in chaiDanBetCode1, but not in chaiDanBetCode2");
+//                    return false;
+//                } else {
+//                    //再查看key对应的value(即倍数)是否相等
+//                    if ( !chaiDanBetCode2.containsValue(value) ) {
+//                        System.out.println("Not the same!");
+//                        System.out.println("key: " + key + "in chaiDanBetCode1,value="
+//                                + value + "but not in chaiDanBetCode2");
+//                        return false;
+//                    }
+//                }
+//            }
 //            totalMoney(chaiDanBetCode1);
-            System.out.println("The Same!");
-//            long endTime = System.currentTimeMillis();
-//            System.out.println("compare Time: " + (endTime - startTime));
+            long endTime = System.currentTimeMillis();
+            System.out.println("compare Time: " + (endTime - startTime));
             return true;
         }
     }

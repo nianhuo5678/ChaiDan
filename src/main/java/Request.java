@@ -1,6 +1,4 @@
-/**
- * Created by Simon on 2017/8/28.
- */
+
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -13,7 +11,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-
 
 import java.io.IOException;
 import java.util.ArrayList;

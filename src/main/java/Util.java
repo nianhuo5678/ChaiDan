@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Util {
 
@@ -56,17 +57,10 @@ public class Util {
      * @param chaiDanBetCode 存放betcode的arraylist
      * @param betCode 将要插入的betcode对象
      */
-    public static void addWithMultiple (HashMap<String, Integer> chaiDanBetCode, BetCode betCode) {
-//        for (BetCode bc : chaiDanBetCode) {
-//            //红球蓝球都相等，增加倍数；不相等，插入队列
-//            if ( bc.getRedBalls().equals(betCode.getRedBalls()) &&
-//                    bc.getBlueBalls().equals(betCode.getBlueBalls())) {
-//                bc.setMultiple(bc.getMultiple() + betCode.getMultiple());
-//                return;
-//            }
-//        }
+    public static void addWithMultiple (Map<Long, Integer> chaiDanBetCode, BetCode betCode) {
+
         //红球蓝球都相等，增加倍数；不相等，插入队列
-        String key = betCode.toString();
+        Long key = Long.parseLong(betCode.toString());
         Integer multiple = chaiDanBetCode.get(key);
         if ( multiple != null ) {
             chaiDanBetCode.put(key, (chaiDanBetCode.get(key) + betCode.getMultiple()) );
@@ -74,5 +68,32 @@ public class Util {
             chaiDanBetCode.put(key, betCode.getMultiple());
         }
 //        chaiDanBetCode.add(betCode);
+    }
+
+    /**
+     * 拼接红、蓝球为，如果号码小于10，在前面补0。
+     * 如9，补0之后为 09
+     * @param sb 拼接之后存入StringBuilder
+     * @param balls 要拼接的红、蓝球列表
+     */
+    public static void combineBalls(StringBuilder sb, ArrayList<Integer> balls) {
+        for (int i : balls) {
+            if (i < 10)
+                sb.append("0");
+            sb.append(i);
+        }
+    }
+
+    /**
+     * 把betCode拼接成JSON字符串
+     * @param str betCode字符串
+     * @return JSON格式的字符串，包括betCode和倍数
+     */
+    public static String getJSONStr(String str) {
+        String jsonStr;
+        String mutiple = str.split("#")[1];
+        jsonStr = "{\"msg\":\"SUCC\",\"result\":[{\"betcode\":\"" +
+                str.split("#")[0] + "\",\"multiple\":" + mutiple + "}],\"code\":0}";
+        return jsonStr;
     }
 }
