@@ -94,7 +94,7 @@ public class BetCode {
      * @return 6+1拆单结果
      */
     public Map<Long, Integer> chaidan (String str) {
-        long startTime = System.currentTimeMillis();
+//        long startTime = System.currentTimeMillis();
         Request request = new Request();
         ArrayList<BetCode> betCodeArrayList = request.transferStr(str);
         Map<Long, Integer> chaiDanBetCode = new TreeMap<>();
@@ -106,8 +106,8 @@ public class BetCode {
                 chaiDantuo(betCodeArrayList.get(i), chaiDanBetCode);
             }
         }
-        long endTime = System.currentTimeMillis();
-        System.out.println("Chaidan Time:" + (endTime - startTime));
+//        long endTime = System.currentTimeMillis();
+//        System.out.println("Chaidan Time:" + (endTime - startTime));
         return chaiDanBetCode;
     }
 
@@ -184,14 +184,13 @@ public class BetCode {
      * @return 比较结果
      */
     public boolean compareChaiDan(Map<Long, Integer> chaiDanBetCode1, Map<Long, Integer> chaiDanBetCode2) {
-        long startTime = System.currentTimeMillis();
+//        long startTime = System.currentTimeMillis();
         if (chaiDanBetCode1.size() != chaiDanBetCode2.size()) {
             System.out.println("Not the same!");
             System.out.println("chaiDanBetCode1:" + chaiDanBetCode1.size());
             System.out.println("chaiDanBetCode2:" + chaiDanBetCode2.size());
             return false;
         } else {
-//            Iterator<Map.Entry<Long, Integer>> iterator = chaiDanBetCode1.entrySet().iterator();
             Iterator<Map.Entry<Long, Integer>> iterator1 = chaiDanBetCode1.entrySet().iterator();
             Iterator<Map.Entry<Long, Integer>> iterator2 = chaiDanBetCode2.entrySet().iterator();
             while (iterator1.hasNext()) {
@@ -204,28 +203,10 @@ public class BetCode {
                     return false;
                 }
             }
-//            while (iterator.hasNext()) {
-//                Map.Entry entry = iterator.next();
-//                Object key = entry.getKey();
-//                Object value = entry.getValue();
-//                //先查看key存不存在
-//                if ( !chaiDanBetCode2.containsKey(key) ) {
-//                    System.out.println("Not the same!");
-//                    System.out.println(key + " in chaiDanBetCode1, but not in chaiDanBetCode2");
-//                    return false;
-//                } else {
-//                    //再查看key对应的value(即倍数)是否相等
-//                    if ( !chaiDanBetCode2.containsValue(value) ) {
-//                        System.out.println("Not the same!");
-//                        System.out.println("key: " + key + "in chaiDanBetCode1,value="
-//                                + value + "but not in chaiDanBetCode2");
-//                        return false;
-//                    }
-//                }
-//            }
+
 //            totalMoney(chaiDanBetCode1);
-            long endTime = System.currentTimeMillis();
-            System.out.println("compare Time: " + (endTime - startTime));
+//            long endTime = System.currentTimeMillis();
+//            System.out.println("compare Time: " + (endTime - startTime));
             return true;
         }
     }

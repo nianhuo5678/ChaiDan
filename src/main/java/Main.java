@@ -22,7 +22,7 @@ public class Main {
             System.out.println("Line " + lines.lastIndexOf(line) + " " + result);
             sb.append(result);
             sb.append("\t");
-            sb.append(line);
+            sb.append(line.split("\t")[0]);
             sb.append("\n");
         }
         //写所有拆单结果到文件

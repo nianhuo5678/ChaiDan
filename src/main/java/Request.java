@@ -66,36 +66,51 @@ public class Request {
     }
 
     public ArrayList<BetCode> transferStr(String jsonStr) {
-        JSONObject jsonObject = JSONObject.fromObject(jsonStr);
-        JSONArray betCodes = jsonObject.getJSONArray("result");
+        JSONObject successObject = JSONObject.fromObject(jsonStr).getJSONObject("result").getJSONObject("success");
+        JSONArray betCodes = successObject.getJSONArray("list");
         ArrayList<BetCode> betCodeArrayList = new ArrayList<BetCode>();
         for (int i = 0; i < betCodes.size(); i++) {
-            BetCode betCode = new BetCode();
-            String betCodeStr = betCodes.getJSONObject(i).getString("betcode");
+            String betCodeStr = betCodes.getJSONObject(i).getString("code");
             int multiple = Integer.parseInt(betCodes.getJSONObject(i).getString("multiple"));
-            betCode.setMultiple(multiple);
-            //区分胆拖和复式
-            if(betCodeStr.contains("$")) {
-                ArrayList<Integer> danBalls = Util.StringToIntArray(betCodeStr.
-                        split("\\|")[0].split("\\$")[0]);
-                ArrayList<Integer> tuoBalls = Util.StringToIntArray(betCodeStr.
-                        split("\\|")[0].split("\\$")[1]);
-                ArrayList<Integer> blueBalls = Util.StringToIntArray(betCodeStr.split("\\|")[1]);
-                betCode.setDanBalls(danBalls);
-                betCode.setTuoBalls(tuoBalls);
-                betCode.setBlueBalls(blueBalls);
+            //拆分多个行注
+            String redBallStr,blueBallStr;
+            if (betCodeStr.contains(";")) {
+                String[] bcList = betCodeStr.split(";");
+                for (String str : bcList) {
+                    redBallStr = str.split("\\|")[0];
+                    blueBallStr = str.split("\\|")[1];
+                    storeBetCode(betCodeArrayList, str, redBallStr, blueBallStr, multiple);
+                }
             } else {
-                String redBallStr = betCodes.getJSONObject(i).
-                        getString("betcode").split("\\|")[0];
-                String blueBallStr = betCodes.getJSONObject(i).
-                        getString("betcode").split("\\|")[1];
-                ArrayList<Integer> redBalls = Util.StringToIntArray(redBallStr);
-                ArrayList<Integer> blueBalls = Util.StringToIntArray(blueBallStr);
-                betCode.setRedBalls(redBalls);
-                betCode.setBlueBalls(blueBalls);
+                redBallStr = betCodeStr.split("\\|")[0];
+                blueBallStr = betCodeStr.split("\\|")[1];
+                storeBetCode(betCodeArrayList, betCodeStr, redBallStr, blueBallStr, multiple);
             }
-            betCodeArrayList.add(betCode);
         }
         return betCodeArrayList;
+    }
+
+    private void storeBetCode(ArrayList<BetCode> betCodeArrayList, String betCodeStr,
+                              String redBallStr, String blueBallStr, int multiple) {
+        BetCode betCode = new BetCode();
+        betCode.setMultiple(multiple);
+        //区分胆拖和复式
+        if(betCodeStr.contains("$")) {
+            ArrayList<Integer> danBalls = Util.StringToIntArray(betCodeStr.
+                    split("\\|")[0].split("\\$")[0]);
+            ArrayList<Integer> tuoBalls = Util.StringToIntArray(betCodeStr.
+                    split("\\|")[0].split("\\$")[1]);
+            ArrayList<Integer> blueBalls = Util.StringToIntArray(betCodeStr.split("\\|")[1]);
+            betCode.setDanBalls(danBalls);
+            betCode.setTuoBalls(tuoBalls);
+            betCode.setBlueBalls(blueBalls);
+            betCodeArrayList.add(betCode);
+        } else {
+            ArrayList<Integer> redBalls = Util.StringToIntArray(redBallStr);
+            ArrayList<Integer> blueBalls = Util.StringToIntArray(blueBallStr);
+            betCode.setRedBalls(redBalls);
+            betCode.setBlueBalls(blueBalls);
+            betCodeArrayList.add(betCode);
+        }
     }
 }
