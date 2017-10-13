@@ -66,12 +66,15 @@ public class Request {
     }
 
     public ArrayList<BetCode> transferStr(String jsonStr) {
-        JSONObject successObject = JSONObject.fromObject(jsonStr).getJSONObject("result").getJSONObject("success");
-        JSONArray betCodes = successObject.getJSONArray("list");
+//        JSONObject successObject = JSONObject.fromObject(jsonStr).getJSONObject("result").getJSONObject("success");
+//        JSONArray betCodes = successObject.getJSONArray("list");
+        JSONArray betCodes = JSONObject.fromObject(jsonStr).getJSONArray("result");
         ArrayList<BetCode> betCodeArrayList = new ArrayList<BetCode>();
         for (int i = 0; i < betCodes.size(); i++) {
-            String betCodeStr = betCodes.getJSONObject(i).getString("code");
-            int multiple = Integer.parseInt(betCodes.getJSONObject(i).getString("multiple"));
+//            String betCodeStr = betCodes.getJSONObject(i).getString("code");
+//            int multiple = Integer.parseInt(betCodes.getJSONObject(i).getString("multiple"));
+            String betCodeStr = betCodes.getJSONObject(i).getString("betcode");
+            int multiple = betCodes.getJSONObject(i).getInt("multiple");
             //拆分多个行注
             String redBallStr,blueBallStr;
             if (betCodeStr.contains(";")) {
@@ -100,6 +103,15 @@ public class Request {
                     split("\\|")[0].split("\\$")[0]);
             ArrayList<Integer> tuoBalls = Util.StringToIntArray(betCodeStr.
                     split("\\|")[0].split("\\$")[1]);
+            if(tuoBalls.size() > 16) {
+                try {
+                    throw new Exception();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    System.out.println("Error! Tuo Ma > 16");
+                }
+            }
             ArrayList<Integer> blueBalls = Util.StringToIntArray(betCodeStr.split("\\|")[1]);
             betCode.setDanBalls(danBalls);
             betCode.setTuoBalls(tuoBalls);
@@ -112,5 +124,6 @@ public class Request {
             betCode.setBlueBalls(blueBalls);
             betCodeArrayList.add(betCode);
         }
+
     }
 }

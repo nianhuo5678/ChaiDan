@@ -91,9 +91,12 @@ public class Util {
     public static String getJSONStr(String str) {
         String jsonStr;
         String mutiple = str.split("#")[1];
-        jsonStr = "{ \"msg\": \"DONE\", \"result\": { \"success\": {\"list\": [  { \"code\": \"" +
-                str.split("#")[0] + "\", \"multiple\":" + mutiple +
-                "} ]}, \"failure\": {\"list\": []} }, \"code\": 0 }";
+//        jsonStr = "{ \"msg\": \"DONE\", \"result\": { \"success\": {\"list\": [  { \"code\": \"" +
+//                str.split("#")[0] + "\", \"multiple\":" + mutiple +
+//                "} ]}, \"failure\": {\"list\": []} }, \"code\": 0 }";
+        jsonStr = "{\"msg\":\"SUCC\",\"result\":[{\"betcode\":\""  +
+                str.split("#")[0] +
+                "\",\"multiple\":" + mutiple + "}],\"code\":0}";
         return jsonStr;
 
     }
