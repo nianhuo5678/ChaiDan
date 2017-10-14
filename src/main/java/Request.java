@@ -103,15 +103,6 @@ public class Request {
                     split("\\|")[0].split("\\$")[0]);
             ArrayList<Integer> tuoBalls = Util.StringToIntArray(betCodeStr.
                     split("\\|")[0].split("\\$")[1]);
-            if(tuoBalls.size() > 16) {
-                try {
-                    throw new Exception();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    System.out.println("Error! Tuo Ma > 16");
-                }
-            }
             ArrayList<Integer> blueBalls = Util.StringToIntArray(betCodeStr.split("\\|")[1]);
             betCode.setDanBalls(danBalls);
             betCode.setTuoBalls(tuoBalls);

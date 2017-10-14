@@ -15,6 +15,7 @@ public class Main {
             String str1 = Util.getJSONStr(line.split("\t")[0]);
             String str2 = line.split("\t")[1];
             BetCode betCode = new BetCode();
+            Util.checkTuoBallAmout(str2);
             //原始betCode与后端拆单之后的两个字符串，分别调用6+1拆单方法
             chaiDanBetCode1 = betCode.chaidan(str1);
             chaiDanBetCode2 = betCode.chaidan(str2);

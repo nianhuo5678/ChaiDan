@@ -1,3 +1,6 @@
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -99,5 +102,33 @@ public class Util {
                 "\",\"multiple\":" + mutiple + "}],\"code\":0}";
         return jsonStr;
 
+    }
+
+    /**
+     * 检查经过接口拆单之后的betcode是否包含超过16个拖码
+     * @param jsonStr 拆单接口返回的JSON字符串
+     */
+    public static void checkTuoBallAmout(String jsonStr){
+        JSONArray betCodes = JSONObject.fromObject(jsonStr).getJSONArray("result");
+        for (int i = 0; i < betCodes.size(); i++) {
+            String betCodeStr = betCodes.getJSONObject(i).getString("betcode");
+            String[] bcList = betCodeStr.split(";");
+            for (String str : bcList) {
+                //胆拖
+                if (str.contains("$")) {
+                    String tuoStr = str.split("\\|")[0].split("\\$")[1];
+                    //胆码大于47个字符。16个胆码，每个2个字符，加15个逗号。
+                    if (tuoStr.length() > 47) {
+                        try {
+                            throw new Exception();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            System.out.println("Error! Tuo Ma > 16");
+                        }
+                    }
+                }
+            }
+        }
     }
 }
